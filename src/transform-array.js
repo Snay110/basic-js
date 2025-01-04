@@ -13,23 +13,35 @@ const { NotImplementedError } = require("../extensions/index.js");
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  *
  */
-function transform(/* arr */) {
-  throw new NotImplementedError("Not implemented");
+function transform(arr) {
+  if (!Array.isArray(arr)) {
+    throw new Error("'arr' parameter must be an instance of the Array!");// проверка на масив 
+  }
+
   const result = [];
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] === "--double-next") {
-    } else if (arr === "--discard-prev") {
-      result.pop();
-    } else if (arr[i] === "--discard-next")
       if (i + 1 < arr.length) {
         result.push(arr[i + 1]);
-      } else if (arr[i] === "--discard-prev") {
-        result.push(arr[i - 1]);
       }
+    } else if (arr[i] === "--discard-prev") {
+      if (result.length > 0 && arr[i - 2] !== "--discard-next") {// проверка на предыдущее значение
+        result.pop();
+      }
+    } else if (arr[i] === "--double-prev") {
+      if (i > 0 && arr[i - 2] !== "--discard-next") { // проверка на предыдущий элемент
+        result.push(arr[i - 1]);// уберёт последний элемент
+      }
+    } else if (arr[i] === "--discard-next") {
+      if (i + 1 < arr.length) {
+        i++; // делает пропуск элкмента
+      }
+    } else {
+      result.push(arr[i]);
+    }
   }
   return result;
 }
-
 module.exports = {
   transform,
 };
